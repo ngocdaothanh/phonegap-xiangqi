@@ -1,5 +1,3 @@
-runningInPcBrowser = navigator.userAgent.indexOf('Firefox') >= 0 || navigator.userAgent.indexOf('Chrome') >= 0
-
 PIECE_IMG_WIDTH = 67
 
 boardWidth  = null
@@ -46,10 +44,10 @@ class Piece
             ctx.globalAlpha = 0.3 if selected
             ctx.drawImage(img, 0, 0, PIECE_IMG_WIDTH, PIECE_IMG_WIDTH, 0, 0, pieceWidth, pieceWidth)
 
-        if runningInPcBrowser
-            canvas.onclick = this.onclick
-        else
+        if PhoneGap.available
             canvas.ontouchstart = this.onclick
+        else
+            canvas.onclick = this.onclick
 
         canvas
 
@@ -80,10 +78,10 @@ class Board
         canvas  = document.getElementById('boardLayer')
         canvas.width   = boardWidth
         canvas.height  = boardHeight
-        if runningInPcBrowser
-            canvas.onclick = this.onclick
-        else
+        if PhoneGap.available
             canvas.ontouchstart = this.onclick
+        else
+            canvas.onclick = this.onclick
         @ctx = canvas.getContext('2d')
 
     drawGrid: =>
@@ -197,6 +195,9 @@ preventBehavior = (e) ->
     e.preventDefault()
 document.addEventListener('touchmove', preventBehavior, false)
 
+runningInPcBrowser =
+    navigator.userAgent.indexOf('Chrome')  >= 0 ||
+    navigator.userAgent.indexOf('Firefox') >= 0
 if runningInPcBrowser
     $(onDeviceReady)
 else
