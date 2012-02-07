@@ -1,0 +1,10 @@
+Web is slow on smartphones by default.
+
+Tips:
+
+Performance:
+* http://stackoverflow.com/questions/5161004/using-phonegap-for-native-application-development
+* Use ontouchstart/end instead of onclick
+
+Most developers develop using Chrome or Firefox:
+runningInPcBrowser = navigator.userAgent.indexOf('Firefox') >= 0 || navigator.userAgent.indexOf('Chrome') >= 0

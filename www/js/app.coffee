@@ -1,3 +1,5 @@
+runningInPcBrowser = navigator.userAgent.indexOf('Firefox') >= 0 || navigator.userAgent.indexOf('Chrome') >= 0
+
 PIECE_IMG_WIDTH = 67
 
 boardWidth  = null
@@ -43,8 +45,12 @@ class Piece
             ctx = canvas.getContext('2d')
             ctx.globalAlpha = 0.3 if selected
             ctx.drawImage(img, 0, 0, PIECE_IMG_WIDTH, PIECE_IMG_WIDTH, 0, 0, pieceWidth, pieceWidth)
-        
-        canvas.onclick = this.onclick
+
+        if runningInPcBrowser
+            canvas.onclick = this.onclick
+        else
+            canvas.ontouchstart = this.onclick
+
         canvas
 
     moveTo: (row, col) =>
@@ -74,7 +80,10 @@ class Board
         canvas  = document.getElementById('boardLayer')
         canvas.width   = boardWidth
         canvas.height  = boardHeight
-        canvas.onclick = this.onclick
+        if runningInPcBrowser
+            canvas.onclick = this.onclick
+        else
+            canvas.ontouchstart = this.onclick
         @ctx = canvas.getContext('2d')
 
     drawGrid: =>
@@ -82,13 +91,13 @@ class Board
 
         for r in [0..9]
             [x1, y] = rc2xy(r, 0)
-            [x2, y] = rc2xy(r, 8)    
+            [x2, y] = rc2xy(r, 8)
             @ctx.moveTo(x1, y)
             @ctx.lineTo(x2, y)
 
         for c in [0..8]
             [x, y1] = rc2xy(0, c)
-            [x, y4] = rc2xy(9, c)    
+            [x, y4] = rc2xy(9, c)
             if c == 0 || c == 8
                 @ctx.moveTo(x, y1)
                 @ctx.lineTo(x, y4)
@@ -116,7 +125,7 @@ class Board
         @ctx.moveTo(x2, y1)
         @ctx.lineTo(x1, y2)
 
-        @ctx.stroke()            
+        @ctx.stroke()
 
     drawBoard: =>
         img = new Image()
@@ -169,8 +178,8 @@ initPieces = ->
     ]
 
 onDeviceReady = ->
-    boardWidth  = 320 #$(window).width()
-    boardHeight = 460 #$(window).height()
+    boardWidth  = $(window).width()
+    boardHeight = $(window).height()
 
     cellWidth  = boardWidth  / 9
     cellHeight = boardHeight / 10
@@ -188,4 +197,7 @@ preventBehavior = (e) ->
     e.preventDefault()
 document.addEventListener('touchmove', preventBehavior, false)
 
-document.addEventListener('deviceready', onDeviceReady, false)
+if runningInPcBrowser
+    $(onDeviceReady)
+else
+    document.addEventListener('deviceready', onDeviceReady, false)
